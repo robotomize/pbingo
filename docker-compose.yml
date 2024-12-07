@@ -1,0 +1,29 @@
+version: "3.8"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      REDIS_URL: "redis://redis:6379"
+      TG_TOKEN: ""
+    restart: always
+    depends_on:
+      - redis
+    volumes:
+      - ./app-data:/usr/src/app/data
+    command: ["node", "dist/bot.js"]
+
+  redis:
+    image: redis:6.2-alpine
+    command: redis-server --appendonly yes
+    restart: always
+    ports:
+      - "6333:6379"
+    volumes:
+      - redis-data:/data
+
+volumes:
+  redis-data:
+    driver: local
